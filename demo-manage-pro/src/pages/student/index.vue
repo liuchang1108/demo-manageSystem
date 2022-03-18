@@ -14,10 +14,7 @@
         <el-input v-model="search.name" placeholder="姓名"></el-input>
       </el-form-item>
       <el-form-item prop="mentor">
-        <el-input
-          v-model="search.mentor"
-          placeholder="导师"
-        ></el-input>
+        <el-input v-model="search.mentor" placeholder="导师"></el-input>
       </el-form-item>
       <el-form-item prop="department">
         <el-select v-model="search.department" placeholder="部门">
@@ -48,27 +45,24 @@
         <el-table-column
           type="index"
           label="序号"
-          width="100"   
+          width="100"
           :index="indexMethod"
         ></el-table-column>
         <el-table-column prop="jobNumber" label="工号"></el-table-column>
         <el-table-column prop="name" label="姓名"></el-table-column>
-       
-        <el-table-column prop="mentor" label="导师" >
-        </el-table-column> 
+
+        <el-table-column prop="mentor" label="导师"> </el-table-column>
         <el-table-column prop="department" label="部门">
           <template #default="scope">
             <span>{{ roleFilter(scope.row.department) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="enterDate" label="入职日期" >
-        </el-table-column> 
-        <el-table-column prop="testDate" label="答辩日期" >
-        </el-table-column> 
+        <el-table-column prop="enterDate" label="入职日期"> </el-table-column>
+        <el-table-column prop="testDate" label="答辩日期"> </el-table-column>
         <el-table-column prop="phoneNumber" label="手机号码"></el-table-column>
-        <el-table-column label="操作" >
+        <el-table-column label="操作">
           <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.row._id)"
+            <el-button size="small" @click="handleEdit(scope.row._id)" plain
               >编辑
             </el-button>
             <el-popconfirm
@@ -81,7 +75,7 @@
               @cancel="cancelEvent"
             >
               <template #reference>
-                <el-button size="small">删除</el-button>
+                <el-button size="small" type="danger" plain>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -114,7 +108,11 @@
           <el-input autocomplete="off" v-model="studentTable.name"></el-input>
         </el-form-item>
         <el-form-item label="导师" prop="mentor">
-          <el-input autocomplete="off" v-model="studentTable.mentor" @click="editOptionTeacher"></el-input>
+          <el-input
+            autocomplete="off"
+            v-model="studentTable.mentor"
+            @click="editOptionTeacher"
+          ></el-input>
         </el-form-item>
         <el-form-item label="部门" prop="department">
           <el-select v-model="studentTable.department" placeholder="请点击选择">
@@ -185,7 +183,7 @@
     </div>
     <!-- 选择导师弹窗 -->
     <el-dialog title="选择导师" v-model="dialogTeacherVisible" width="500px">
-            <teacherVue :isDialog='true' @option-teacher="optionTeacher"></teacherVue>
+      <teacherVue :isDialog="true" @option-teacher="optionTeacher"></teacherVue>
     </el-dialog>
   </div>
 </template>
@@ -193,13 +191,14 @@
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   nextTick,
   reactive,
   ref,
   toRefs,
 } from "vue";
 import studentApi from "../../api/student";
-import teacherVue from "../teacher/index.vue"
+import teacherVue from "../mentor/index.vue";
 import { ElForm, ElMessage } from "element-plus";
 import { InfoFilled } from "@element-plus/icons-vue";
 
@@ -210,9 +209,10 @@ export default defineComponent({
   name: "studentVue",
   components: {
     InfoFilled,
-    teacherVue
+    teacherVue,
   },
   setup(props, context) {
+    const { ctx: _this }: any = getCurrentInstance();
     const dialogTeacherVisible = ref(false);
     const isEdit = ref(false);
     const roleOptions = reactive([
@@ -235,7 +235,7 @@ export default defineComponent({
       name: "",
       department: "",
       mentor: "",
-      mentorId:""
+      mentorId: "",
     });
     const studentTable = ref({
       _id: null,
@@ -246,7 +246,8 @@ export default defineComponent({
       enterDate: "",
       testDate: "",
       phoneNumber: "",
-      mentorId:""
+      mentorId: "",
+      levelValue: "",
     });
     const rules = reactive({
       jobNumber: [
@@ -301,6 +302,7 @@ export default defineComponent({
       dialogFormVisible.value = true;
       nextTick(() => {
         resetForm(studentForm.value);
+        _this.$forceUpdate();
       });
     };
     const addData = (formEl: FormInstance | undefined) => {
@@ -324,6 +326,7 @@ export default defineComponent({
           return false;
         }
       });
+      _this.$forceUpdate();
     };
     const updateData = (formEl: FormInstance | undefined) => {
       if (!formEl) return;
@@ -346,6 +349,7 @@ export default defineComponent({
           return false;
         }
       });
+      _this.$forceUpdate();
     };
     const handleEdit = (id: any) => {
       handleAdd();
@@ -367,6 +371,7 @@ export default defineComponent({
           fetchData();
         }
       });
+      _this.$forceUpdate();
     };
     const cancelEvent = () => {
       ElMessage({
@@ -391,22 +396,22 @@ export default defineComponent({
     const indexMethod = (index: number) => {
       return index + 1 + (formState.currentPage - 1) * formState.pageSize;
     };
-    const optionTeacher=(currentRow:any)=>{
-                if(isEdit.value){
-                    studentTable.value.mentor = currentRow.name;
-                    studentTable.value.mentorId = currentRow.id
-                }else{
-                    search.mentor = currentRow.name;
-                    search.mentorId = currentRow.id;
-                    dialogFormVisible.value = false;
-                }
-                    isEdit.value = false;
-                    dialogTeacherVisible.value = false;
-            }
-    const editOptionTeacher=()=>{
-        isEdit.value = true;
-        dialogTeacherVisible.value = true;
-    }
+    const optionTeacher = (currentRow: any) => {
+      if (isEdit.value) {
+        studentTable.value.mentor = currentRow.name;
+        studentTable.value.mentorId = currentRow.id;
+      } else {
+        search.mentor = currentRow.name;
+        search.mentorId = currentRow.id;
+        dialogFormVisible.value = false;
+      }
+      isEdit.value = false;
+      dialogTeacherVisible.value = false;
+    };
+    const editOptionTeacher = () => {
+      isEdit.value = true;
+      dialogTeacherVisible.value = true;
+    };
     return {
       roleOptions,
       search,
@@ -432,7 +437,7 @@ export default defineComponent({
       indexMethod,
       dialogTeacherVisible,
       optionTeacher,
-      editOptionTeacher
+      editOptionTeacher,
     };
   },
 });
@@ -458,7 +463,7 @@ export default defineComponent({
   .el-form {
     margin-left: 20px;
     margin-top: 10px !important;
-    margin-bottom:10px;
+    margin-bottom: 10px;
   }
 }
 </style>

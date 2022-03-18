@@ -72,7 +72,7 @@
         <el-table-column prop="name" label="姓名"></el-table-column>
         <el-table-column prop="department" label="部门" v-if="!isDialog">
           <template #default="scope">
-            <span >{{ roleFilter(scope.row.department)}}</span>
+            <span>{{ roleFilter(scope.row.department) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="departmentStu" label="实习学员" v-if="!isDialog">
@@ -80,7 +80,7 @@
         <el-table-column prop="phoneNumber" label="手机号码"></el-table-column>
         <el-table-column label="操作" v-if="!isDialog">
           <template #default="scope">
-            <el-button size="mini" @click="handleEdit(scope.row._id)"
+            <el-button size="small" @click="handleEdit(scope.row._id)" plain
               >编辑
             </el-button>
             <el-popconfirm
@@ -93,7 +93,7 @@
               @cancel="cancelEvent"
             >
               <template #reference>
-                <el-button>删除</el-button>
+                <el-button size="small" type="danger" plain>删除</el-button>
               </template>
             </el-popconfirm>
           </template>
@@ -182,12 +182,13 @@
 import {
   computed,
   defineComponent,
+  getCurrentInstance,
   nextTick,
   reactive,
   ref,
   toRefs,
 } from "vue";
-import teacherApi from "../../api/teacher";
+import teacherApi from "../../api/mentor";
 import { ElForm, ElMessage } from "element-plus";
 import { InfoFilled } from "@element-plus/icons-vue";
 
@@ -203,6 +204,8 @@ export default defineComponent({
     isDialog: Boolean,
   },
   setup(props, context) {
+    const { ctx: _this }: any = getCurrentInstance();
+
     const { isDialog } = toRefs(props);
     isDialog.value = false;
     const roleOptions = reactive([
@@ -278,6 +281,7 @@ export default defineComponent({
       dialogFormVisible.value = true;
       nextTick(() => {
         resetForm(teacherForm.value);
+        _this.$forceUpdate();
       });
     };
     const addData = (formEl: FormInstance | undefined) => {
@@ -289,6 +293,7 @@ export default defineComponent({
             if (resp.flag) {
               fetchData();
               dialogFormVisible.value = false;
+              _this.$forceUpdate();
             } else {
               ElMessage({
                 message: resp.message,
@@ -311,6 +316,7 @@ export default defineComponent({
             if (resp.flag) {
               fetchData();
               dialogFormVisible.value = false;
+              _this.$forceUpdate();
             } else {
               ElMessage({
                 message: resp.message,
@@ -332,6 +338,7 @@ export default defineComponent({
           teacher.value = resp.data;
         }
       });
+      _this.$forceUpdate();
     };
     const confirmEvent = (id: any) => {
       teacherApi.deleteById(id).then((response) => {
@@ -342,6 +349,7 @@ export default defineComponent({
         });
         if (resp.flag) {
           fetchData();
+          _this.$forceUpdate();
         }
       });
     };
@@ -355,23 +363,23 @@ export default defineComponent({
     const handleCurrentChange = (pageNumber: number) => {
       // 改变默认的页数
       formState.currentPage = pageNumber;
-      fetchData()
+      fetchData();
     };
-       const handleSizeChange = (side: number) => {
-            // 改变每页显示的条数
-            formState.pageSize = side;
-            // 在改变每页显示的条数时，要将页码显示到第一页
-            formState.currentPage = 1;
-            fetchData()
-        };
+    const handleSizeChange = (side: number) => {
+      // 改变每页显示的条数
+      formState.pageSize = side;
+      // 在改变每页显示的条数时，要将页码显示到第一页
+      formState.currentPage = 1;
+      fetchData();
+    };
     const clickCurrentChange = (currentRow: any) => {
       console.log(currentRow);
       context.emit("option-teacher", currentRow);
     };
     const showNoData = ref("没有查询到数据");
-    const indexMethod=(index:number)=>{
-      return index+1+(formState.currentPage-1)*formState.pageSize
-    }
+    const indexMethod = (index: number) => {
+      return index + 1 + (formState.currentPage - 1) * formState.pageSize;
+    };
     return {
       roleOptions,
       searchMap,
@@ -395,7 +403,7 @@ export default defineComponent({
       formState,
       clickCurrentChange,
       showNoData,
-      indexMethod
+      indexMethod,
     };
   },
 });
@@ -405,7 +413,7 @@ export default defineComponent({
   .el-form {
     margin-left: 10px;
     margin-top: -5px !important;
-    margin-bottom:10px;
+    margin-bottom: 10px;
   }
 }
 .teacherVue__paginationTool {
@@ -417,7 +425,7 @@ export default defineComponent({
     font-size: 14px;
     margin-top: -10px;
   }
-  .teacherVue__pagination{
+  .teacherVue__pagination {
     margin-right: 30px;
   }
 }

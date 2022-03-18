@@ -1,7 +1,7 @@
 var express = require("express");
 var md5 = require("blueimp-md5");
 var User = require("./User.js");
-var Teacher = require("./Teacher.js");
+var Teacher = require("./Mentor.js");
 var Student = require("./Student.js");
 var router = express.Router();
 // 注册
@@ -285,7 +285,7 @@ router.post("/student/list",function(req,res){
     searchMap.mentor ? obj["mentor"] = searchMap.mentor : obj;
     searchMap.enterDate ? obj["enterDate"] = searchMap.enterDate : obj;
     searchMap.mentorId ? obj["teacherId"] = searchMap.mentorId : obj;
-    searchMap.testData ? obj["testData"] = searchMap.testData : obj;
+    searchMap.testDate ? obj["testDate"] = searchMap.testDate : obj;
     Student.find(obj,function(err,data){
         if(err){
             return res.status(500).json({

@@ -3,7 +3,52 @@
     <a href="#" class="appHeader-title">
       <span>实习生入职管理系统</span>
     </a>
+
     <div class="appHeader-dropdown">
+       <el-menu
+    :default-active="route.path"
+    class="appHeader-menu"
+    mode="horizontal"
+    router="true"
+     background-color="#01162b"
+    text-color="#fff"
+    active-text-color="#ffd04b"
+  >
+    <el-menu-item index="/level">评级</el-menu-item>
+  </el-menu>
+      <el-button type="text" @click="helpPage = true" class="appHeader-help"
+        >帮助</el-button
+      >
+      <el-drawer
+        v-model="helpPage"
+        title="帮助"
+        direction="rtl"
+        size="35%"
+        class="appHeader-helpPage"
+      >
+        <div class="homeVue-text">
+          <span
+            >1.项目介绍：共包含两个管理子模块和一个评级子模块，分别是导师信息管理、实习生入职管理和实习生等级评选(答辩后通过与否和等级评价)</span
+          >
+           <el-divider border-style="dashed"></el-divider>
+          <span
+            >2.涉及技术：html+scss+vue3.0+typescript+node.js+element-plus+mongodb</span
+          >
+            <el-divider border-style="dashed"></el-divider>
+          <span>3.构建项目工具：vite</span>
+            <el-divider border-style="dashed"></el-divider>
+          <span
+            >4.包含功能：新增员工、设置导师、查询员工、更改员工信息、删除员工信息、修改密码、评答辩等级等基础功能</span
+          >
+            <el-divider border-style="dashed"></el-divider>
+          <span>5.github账号:liuchang1108</span>
+            <el-divider border-style="dashed"></el-divider>
+          <span>6.学号：1914010815</span>
+            <el-divider border-style="dashed"></el-divider>
+          <span>7.专业班级姓名：软件19-8班刘畅</span>
+            <el-divider border-style="dashed"></el-divider>
+        </div>
+      </el-drawer>
       <el-dropdown @command="handleCommand">
         <span class="el-dropdown-link">
           {{ user.nickname
@@ -22,41 +67,40 @@
         ></el-avatar>
       </div>
     </div>
-     <!-- 修改密码弹窗-->
-      <el-dialog
-        title="修改密码"
-        v-model="dialogVisible"
-        width="400px"
-        class="appHeader-dialog"
+    <!-- 修改密码弹窗-->
+    <el-dialog
+      title="修改密码"
+      v-model="dialogVisible"
+      width="400px"
+      class="appHeader-dialog"
+    >
+      <el-form
+        :model="ruleForm"
+        status-icon
+        :rules="rules"
+        ref="ruleFormRef"
+        label-width="80px"
+        class="appHeader-changePass"
       >
-        <el-form
-          :model="ruleForm"
-          status-icon
-          :rules="rules"
-          ref="ruleFormRef"
-          label-width="80px"
-          class="appHeader-changePass"
-        >
-          <el-form-item label="原密码" prop="oldPass">
-            <el-input type="password" v-model="ruleForm.oldPass"></el-input>
-          </el-form-item>
-          <el-form-item label="新密码" prop="pass">
-            <el-input type="password" v-model="ruleForm.pass"></el-input>
-          </el-form-item>
-          <el-form-item label="确认密码" prop="checkPass">
-            <el-input type="password" v-model="ruleForm.checkPass"></el-input>
-          </el-form-item>
-          <el-form-item>
-              <div  class="appHeader-dialog__button">
-                    <el-button type="primary" @click="submitForm(ruleFormRef)"
+        <el-form-item label="原密码" prop="oldPass">
+          <el-input type="password" v-model="ruleForm.oldPass"></el-input>
+        </el-form-item>
+        <el-form-item label="新密码" prop="pass">
+          <el-input type="password" v-model="ruleForm.pass"></el-input>
+        </el-form-item>
+        <el-form-item label="确认密码" prop="checkPass">
+          <el-input type="password" v-model="ruleForm.checkPass"></el-input>
+        </el-form-item>
+        <el-form-item>
+          <div class="appHeader-dialog__button">
+            <el-button type="primary" @click="submitForm(ruleFormRef)"
               >提交</el-button
             >
             <el-button @click="resetForm(ruleFormRef)">重置</el-button>
-              </div>
-          
-          </el-form-item>
-        </el-form>
-      </el-dialog>
+          </div>
+        </el-form-item>
+      </el-form>
+    </el-dialog>
   </div>
 </template>
 <script lang="ts">
@@ -67,6 +111,8 @@ import { useRoute, useRouter } from "vue-router";
 import { ElMessage } from "element-plus";
 import { ArrowDown } from "@element-plus/icons-vue";
 import type { ElForm } from "element-plus";
+import { ElMessageBox } from "element-plus";
+import type { ElDrawer } from "element-plus";
 
 type FormInstance = InstanceType<typeof ElForm>;
 const ruleFormRef = ref<FormInstance>();
@@ -77,7 +123,16 @@ export default defineComponent({
     ArrowDown,
   },
   setup() {
+    let timer = ref();
+
+    const helpPage = ref(false);
+    const drawerRef = ref<InstanceType<typeof ElDrawer>>();
+    const onClick = () => {
+      drawerRef.value!.close();
+    };
+
     const router = useRouter();
+    const route = useRoute();
     const validateOldPass = (rule: any, value: any, callback: any) => {
       passwordApi.checkPwd(user.id, value).then((response: { data: any }) => {
         const resp = response.data;
@@ -195,6 +250,9 @@ export default defineComponent({
         }
       );
     };
+    const toHelpPage = () => {
+      router.push("/help");
+    };
     return {
       handleCommand,
       submitForm,
@@ -205,6 +263,9 @@ export default defineComponent({
       dialogVisible,
       ruleFormRef,
       user,
+      route,
+      helpPage,
+      toHelpPage
     };
   },
 });
@@ -230,6 +291,9 @@ export default defineComponent({
   margin-right: 20px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  margin-top: -3px;
+  font-size: 13px !important;
 }
 .el-dropdown-link {
   cursor: pointer;
@@ -250,10 +314,41 @@ export default defineComponent({
 .appHeader-dialog {
   height: 100px !important;
 }
-.appHeader-dialog__button{
-    margin-top:8px;
-    margin-bottom: -40px;
-    margin-left: 88px;
+.appHeader-dialog__button {
+  margin-top: 8px;
+  margin-bottom: -40px;
+  margin-left: 88px;
 }
-
+.appHeader-help {
+  margin-right: 56px;
+  margin-top: 2px;
+  color: #fff;
+  line-height: 0 !important;
+}
+.el-button {
+  font-size: 14px !important;
+}
+.appHeader-menu {
+  width: 152px;
+font-size: 14px;
+margin-left:200px;
+line-height: 0 !important;
+  .el-menu--horizontal {
+    border-bottom: none !important;
+  }
+  .el-menu-item {
+    padding: 0 30px;
+    height: 68px;
+    margin-top:5px;
+    margin-left:20px;
+  }
+}
+.appHeader-avatar {
+  margin-left: 7px;
+  margin-top: 8px;
+}
+.homeVue-text {
+  font-size: 18px;
+  font-family: "华文中宋";
+}
 </style>

@@ -3,16 +3,6 @@
      <div class="homeVue-title">
     <h2 class="homeVue-title__text">Hi，欢迎使用实习生入职管理系统!</h2> 
     </div> 
-    <div class="homeVue-text">
-    <span>项目介绍：共包含两个管理子模块，分别是导师信息管理和实习生入职管理</span><br>
-    <span>涉及技术：html+scss+vue3.0+typescript+node.js+element-plus+mongodb</span><br>
-    <span>构建项目工具：vite</span><br>
-    <span>包含功能：新增员工、设置导师、查询员工、更改员工信息、删除员工信息、修改密码等基础功能</span><br>
-    <span>github账号:liuchang1108</span><br>
-    <span>学号：1914010815</span><br>
-    <span>专业班级姓名：软件19-8班刘畅</span><br>
-
-    </div>
      <div class="homeVue-mainTools">
     <el-space wrap :size="size">
       <el-card
@@ -91,20 +81,12 @@ export default defineComponent({
     color: #fff;
     border-radius: 5px;
     width: 1185px;
-    height: 150px;
+    height: 180px;
     display: flex;
     &__text{
         margin-left: 20px;
+        line-height: 60px;
     }
-}
-.homeVue-text{
-    background-color: rgb(247, 247, 247);
-    border-radius: 5px;
-     width: 1175px;
-     margin-top: 15px;
-     padding-left: 10px;
-     padding-top: 10px;
-     padding-bottom: 10px;
 }
 .homeVue-mainTools{
    width: 100%;
@@ -113,7 +95,7 @@ export default defineComponent({
     width: 440px;
     height: 250px;
     display: flex;
-    margin-top:30px;
+    margin-top:80px;
     margin-right:0;
     color:rgb(56, 53, 53)
 }

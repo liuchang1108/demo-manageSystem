@@ -36,6 +36,9 @@ var userSchema = new Schema({
     testDate:{
         type:String,
 
+    },
+    levelValue:{
+        type:String
     }
  })
 module.exports = mongoose.model('Student',userSchema);

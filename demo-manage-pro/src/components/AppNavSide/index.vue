@@ -15,6 +15,10 @@
             <el-icon><icon-stu /></el-icon>
             <span>实习生入职管理</span>
           </el-menu-item>
+           <el-menu-item index="/level">
+           <el-icon><icon-choose /></el-icon>
+            <span>实习生等级评选</span>
+          </el-menu-item>
         </el-menu>
       </el-col>
     </el-row>
@@ -25,6 +29,7 @@ import {
   Avatar as IconMentor,
   HomeFilled as IconIntroduction,
   Reading as IconStu,
+  Filter as IconChoose
 } from "@element-plus/icons-vue";
 import { defineComponent } from "vue";
 import { useRoute } from "vue-router";
@@ -33,7 +38,8 @@ export default defineComponent({
   components: {
     IconMentor,
     IconIntroduction,
-    IconStu
+    IconStu,
+    IconChoose
   },
   setup() {
       const route=useRoute()

@@ -23,9 +23,15 @@ const routes = [
               }
           },{
             path:'/teacher',
-            component:()=>import('../pages/teacher/index.vue'),
+            component:()=>import('../pages/mentor/index.vue'),
             meta:{
                 title:'导师信息管理'
+            }
+        },{
+            path:'/level',
+            component:()=>import('../pages/level/index.vue'),
+            meta:{
+                title:'实习生等级评选'
             }
         }
        ]
